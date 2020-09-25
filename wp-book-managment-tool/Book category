@@ -1,0 +1,50 @@
+// add action hook for custom taxonaomy in class-plugin-name.php file
+
+private function define_admin_hooks() {
+
+		$plugin_admin = new Wp_Book_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		
+		//action hook for custom post type
+
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_post' );
+
+		//action hook for taxonomy
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_taxonomy' );
+
+	}
+  
+  
+  //creat custom taxonomy method in class-plugin-name-admin.php file
+
+	public function custom_taxonomy(){
+
+		// Add new taxonomy, make it hierarchical (categories)
+		$labels = array(
+			'name'              => _x( ' Book Category', 'taxonomy general name', $this->plugin_name ),
+			'singular_name'     => _x( ' Book Category', 'taxonomy singular name', $this->plugin_name ),
+			'search_items'      => __( 'Search  Book Categories',$this->plugin_name  ),
+			'all_items'         => __( 'All  Book Categories', $this->plugin_name ),
+			'parent_item'       => __( 'Parent  Book Category', $this->plugin_name ),
+			'parent_item_colon' => __( 'Parent  Book Category:',$this->plugin_name  ),
+			'edit_item'         => __( 'Edit  Book Category', $this->plugin_name ),
+			'update_item'       => __( 'Update  Book Category', $this->plugin_name ),
+			'add_new_item'      => __( 'Add New  Book Category',$this->plugin_name  ),
+			'new_item_name'     => __( 'New  Book Category Name', $this->plugin_name ),
+			'menu_name'         => __( ' Book Category', $this->plugin_name ),
+		);
+	 
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug' => 'book' ),
+		);
+		// register taxonomy as book category
+		register_taxonomy(  'Book Category','book' , $args );
+	}
