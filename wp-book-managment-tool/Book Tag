@@ -1,0 +1,60 @@
+	public function custom_taxonomy(){
+
+		// Add new taxonomy, make it hierarchical (categories)
+		$labels = array(
+			'name'              => _x( ' Book Category', 'taxonomy general name', $this->plugin_name ),
+			'singular_name'     => _x( ' Book Category', 'taxonomy singular name', $this->plugin_name ),
+			'search_items'      => __( 'Search  Book Categories',$this->plugin_name  ),
+			'all_items'         => __( 'All  Book Categories', $this->plugin_name ),
+			'parent_item'       => __( 'Parent  Book Category', $this->plugin_name ),
+			'parent_item_colon' => __( 'Parent  Book Category:',$this->plugin_name  ),
+			'edit_item'         => __( 'Edit  Book Category', $this->plugin_name ),
+			'update_item'       => __( 'Update  Book Category', $this->plugin_name ),
+			'add_new_item'      => __( 'Add New  Book Category',$this->plugin_name  ),
+			'new_item_name'     => __( 'New  Book Category Name', $this->plugin_name ),
+			'menu_name'         => __( ' Book Category', $this->plugin_name ),
+		);
+	 
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug' => 'book' ),
+		);
+		// register taxonomy as book category
+		register_taxonomy(  'Book Category','book' , $args );
+
+		// Add new taxonomy,  non-hierarchical (like tags)
+		$labels = array(
+			'name'                       => _x( 'Book Tag', 'taxonomy general name', $this->plugin_name ),
+			'singular_name'              => _x( 'Book Tag', 'taxonomy singular name', $this->plugin_name ),
+			'search_items'               => __( 'Search Book Tags', $this->plugin_name ),
+			'popular_items'              => __( 'Popular Book Tags', $this->plugin_name ),
+			'all_items'                  => __( 'All Book Tags', $this->plugin_name ),
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'edit_item'                  => __( 'Edit Book Tag', $this->plugin_name ),
+			'update_item'                => __( 'Update Book Tag', $this->plugin_name ),
+			'add_new_item'               => __( 'Add New Book Tag', $this->plugin_name ),
+			'new_item_name'              => __( 'New Book Tag Name', $this->plugin_name ),
+			'separate_items_with_commas' => __( 'Separate Book Tags with commas', $this->plugin_name ),
+			'add_or_remove_items'        => __( 'Add or remove Book Tags', $this->plugin_name ),
+			'choose_from_most_used'      => __( 'Choose from the most used Book Tags', $this->plugin_name ),
+			'not_found'                  => __( 'No Book Tags found.', $this->plugin_name ),
+			'menu_name'                  => __( 'Book Tags', $this->plugin_name ),
+		);
+	 
+		$args = array(
+			'hierarchical'          => false,
+			'labels'                => $labels,
+			'show_ui'               => true,
+			'show_admin_column'     => true,
+			'update_count_callback' => '_update_post_term_count',
+			'query_var'             => true,
+			'rewrite'               => array( 'slug' => 'book' ),
+		);
+		//register non-hierarchical taxonomy Book Tag
+		register_taxonomy( 'Book Tag', 'book', $args );
+	}
