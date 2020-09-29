@@ -1,0 +1,91 @@
+//add action hook for custom meta box and save post hook in class-plugin-name.php file
+
+private function define_admin_hooks() {
+
+		$plugin_admin = new Wp_Book_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		//action hook for CPT
+		
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_post' );
+		
+		//add action hook for custom taxonomy
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_taxonomy' );
+
+		//add action for custom meta box
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'rerender_meta_options' );
+		
+		//add action for save post
+		$this->loader->add_action( 'save_post', $plugin_admin, 'save_meta_options' );
+
+	}
+  
+  
+  //creat  functions for save custom fields,creat meta box and display meta box in class-plugin-name-admin.php file 
+  
+  // Save custom fields
+public function save_meta_options() {
+
+    if ( ! current_user_can( 'edit_posts' ) ) return;
+
+    global $post;
+    update_post_meta($post->ID, "book_author", $_POST["book_author"]);
+    update_post_meta($post->ID, "book_published_date", $_POST["book_published_date"]);
+    update_post_meta($post->ID, "book_price", $_POST["book_price"]);
+    update_post_meta($post->ID, "book_publisher", $_POST["book_publisher"]);
+    update_post_meta($post->ID, "book_edition", $_POST["book_edition"]);
+    update_post_meta($post->ID, "book_url", $_POST["book_url"]);
+
+}
+
+/* Create a meta box for our custom fields */
+public function rerender_meta_options() {
+
+    add_meta_box("book-meta", "Book Details", array($this, "display_meta_options"), "book", "normal", "low");
+
+}
+
+// Display meta box and custom fields
+public function display_meta_options() {
+
+    global $post;
+    $custom = get_post_custom($post->ID);
+
+    $book_author = $custom["book_author"][0];
+    ?>
+    <label><?php _e( 'Book Author:', $this->plugin_name ); ?></label>
+	<input name="book_author" type="text" value="<?php echo $book_author; ?>" /><br>
+    <?php
+
+    $book_published_date = $custom["book_published_date"][0];
+    ?><br>
+    <label><?php _e( 'Published date', $this->plugin_name ); ?></label>
+	<input name="book_published_date" id="book_published_date" type="date" value="<?php echo $book_published_date; ?>"/> <br>
+    <?php
+	
+    $book_price = $custom["book_price"][0];
+    ?><br>
+    <label><?php _e( 'Book Price:', $this->plugin_name ); ?></label>
+	<input name="book_price" type="number" value="<?php echo $book_price; ?>" /><br>
+    <?php
+
+    $book_publisher = $custom["book_publisher"] [0];
+    ?><br>
+    <label><?php _e( 'Publisher :', $this->plugin_name ); ?></label>
+	<input name="book_publisher" id="book_publisher" type="text" value="<?php echo $book_publisher; ?>"/> <br>
+    <?php
+	
+    $book_edition = $custom["book_edition"][0];
+    ?><br>
+    <label><?php _e( 'Edition :', $this->plugin_name ); ?></label>
+	<input name="book_edition" id="book_edition" type="text" value="<?php echo $book_edition; ?>"/> <br>
+    <?php
+
+    $book_url = $custom["book_url"][0];
+    ?><br>
+    <label><?php _e( 'URL :', $this->plugin_name ); ?></label>
+	<input name="book_url" id="book_url" type="url" value="<?php echo $book_url; ?>"/> <br>
+    <?php
+
+}
