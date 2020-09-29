@@ -1,0 +1,79 @@
+// add action hook for creat colums and add filter hook to output column content in class-plugin-name.php file
+
+private function define_admin_hooks() {
+
+		$plugin_admin = new Wp_Book_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		//action hook for CPT
+		
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_post' );
+		
+		//add action hook for custom taxonomy
+		$this->loader->add_action( 'init', $plugin_admin, 'custom_taxonomy' );
+
+		//add action for custom meta box
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'rerender_meta_options' );
+		
+		//add action for save post
+		$this->loader->add_action( 'save_post', $plugin_admin, 'save_meta_options' );
+
+		//add action hook for creat colums
+
+		$this->loader->add_action( 'manage_book_posts_columns', $plugin_admin, 'add_book_columns' );
+
+		//add filter hook to output column content
+
+		$this->loader->add_filter( 'manage_book_posts_custom_column', $plugin_admin, 'output_column_content',10,2 );
+
+
+
+	}
+  
+  //creat function  for add columns for meta table and output table column values
+  
+  /*add columns for meta table*/
+
+public function add_book_columns($columns){
+
+		unset($columns['author']);
+		unset($columns['comments']);
+
+	$columns['author']           =  __('Book Author',$this->plugin_name);
+	$columns['date']             =  __('Published on',$this->plugin_name);
+	$columns['publisher']        =  __('Book Publisher',$this->plugin_name);
+	$columns['edition']          =  __('Book Edition',$this->plugin_name);
+	$columns['price']            =  __('Book Price',$this->plugin_name);
+	$columns['url']              =  __('Book URL',$this->plugin_name);
+
+	return $columns;
+}
+
+/*output table column values*/
+
+public function output_column_content($column,$post_id){
+	switch($column){
+		case 'author' :
+			echo get_post_meta( $post_id, 'book_author',$this->plugin_name,true );
+		break;
+		case 'date' :
+			echo get_post_meta( $post_id, 'book_published_date',$this->plugin_name,true );
+		break;
+		case 'publisher' :
+			echo get_post_meta( $post_id, 'book_publisher',$this->plugin_name,true );
+		break;
+		case 'edition' :
+			echo get_post_meta( $post_id, 'book_edition',$this->plugin_name,true );
+		break;
+		case 'price' :
+			echo get_post_meta( $post_id, 'book_price',$this->plugin_name,true );
+		break;
+		case 'url' :
+			echo get_post_meta( $post_id, 'book_url',$this->plugin_name,true );
+		break;
+
+		default:
+	break;
+	}
+}
