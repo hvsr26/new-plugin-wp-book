@@ -297,9 +297,54 @@ function bookplugin_settings_radio_field_callback() {
         <input type="radio" name="bookplugin_settings_radio_field" value="value2" <?php checked( 'value2', $bookplugin_radio_field ); ?>/> Value 2
     </label>
     <?php
+    
+  /**
+  *add action hooks in class-plugin-name.php file
+  **/
+    		//add action hook for creat custom settings menu
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'bookplugin_settings_menu' );
+		
+		//add action hook for setup settings section
+		
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'bookplugin_settings_init' );
+    
+
+/**
+ * Creat Settings Menu in class-plugin-name-admin.php file
+ */
+public function bookplugin_settings_menu(){
+
+		ob_start();//started buffer
+		
+		//include setting page
+		include_once(WP_BOOK_PLUGIN_PATH."includes/settings/settings.php");
+		
+		$template = ob_get_contents();//reading content
+		
+		ob_end_clean();//closing and cleaning
+
+		echo $template;
+	}
+
+	
+
+	public function bookplugin_settings_init(){
+
+		ob_start();//started buffer
+		
+		//include setting page
+		include_once(WP_BOOK_PLUGIN_PATH."includes/settings/settings.php");
+		
+		$template = ob_get_contents();//reading content
+		
+		ob_end_clean();//closing and cleaning
+
+		echo $template;
+
+	}
+
+
 }
-
-
 
 
 
