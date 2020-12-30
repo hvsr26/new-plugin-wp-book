@@ -10,22 +10,22 @@ private function define_admin_hooks() {
 		
 		//action hook for custom post type
 
-		$this->loader->add_action( 'init', $plugin_admin, 'custom_post' );
+		$this->loader->add_action( 'init', $plugin_admin, 'wp_book_custom_post' );
 
 		//action hook for taxonomy
-		$this->loader->add_action( 'init', $plugin_admin, 'custom_taxonomy' );
+		$this->loader->add_action( 'init', $plugin_admin, 'wp_book_custom_taxonomy' );
 
 	}
   
   
   //creat custom taxonomy method in class-plugin-name-admin.php file
 
-	public function custom_taxonomy(){
+	public function wp_book_custom_taxonomy(){
 
 		// Add new taxonomy, make it hierarchical (categories)
 		$labels = array(
-			'name'              => _x( ' Book Category', 'taxonomy general name', $this->plugin_name ),
-			'singular_name'     => _x( ' Book Category', 'taxonomy singular name', $this->plugin_name ),
+			'name'              => __( ' Book Category', $this->plugin_name ),
+			'singular_name'     => __( ' Book Category', $this->plugin_name ),
 			'search_items'      => __( 'Search  Book Categories',$this->plugin_name  ),
 			'all_items'         => __( 'All  Book Categories', $this->plugin_name ),
 			'parent_item'       => __( 'Parent  Book Category', $this->plugin_name ),
@@ -43,8 +43,8 @@ private function define_admin_hooks() {
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'query_var'         => true,
-			'rewrite'           => array( 'slug' => 'book' ),
+			'rewrite'           => array( 'slug' => 'book_category' ),
 		);
 		// register taxonomy as book category
-		register_taxonomy(  'Book Category','book' , $args );
-	}
+		register_taxonomy(  'book_category','book' , $args );
+	} //end of wp_book_custom_taxonomy
