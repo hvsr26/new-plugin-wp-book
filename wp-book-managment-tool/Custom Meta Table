@@ -19,61 +19,141 @@ private function define_admin_hooks() {
 		//add action for save post
 		$this->loader->add_action( 'save_post', $plugin_admin, 'save_meta_options' );
 
-		//add action hook for creat colums
+		
+		//add action hook for register the wp_bookmeta
 
-		$this->loader->add_action( 'manage_book_posts_columns', $plugin_admin, 'add_book_columns' );
-
-		//add filter hook to output column content
-
-		$this->loader->add_filter( 'manage_book_posts_custom_column', $plugin_admin, 'output_column_content',10,2 );
-
-
+		$this->loader->add_action('plugins_loaded',  $plugin_admin,'wp_book_meta_table_init');
 
 	}
   
-  //creat function  for add columns for meta table and output table column values
+  //register activation hook in class-wp-book-activator.php file
   
-  /*add columns for meta table*/
+  
+  <?php
 
-public function add_book_columns($columns){
+/**
+ * Fired during plugin activation
+ *
+ * @link       https://hvsr26.wordpress.com/
+ * @since      1.0.0
+ *
+ * @package    Wp_Book
+ * @subpackage Wp_Book/includes
+ */
 
-		unset($columns['author']);
-		unset($columns['comments']);
+/**
+ * Fired during plugin activation.
+ *
+ * This class defines all code necessary to run during the plugin's activation.
+ *
+ * @since      1.0.0
+ * @package    Wp_Book
+ * @subpackage Wp_Book/includes
+ * @author     Harshvardhan singh rathore <hvsr26@gmail.com>
+ */
+class Wp_Book_Activator {
 
-	$columns['author']           =  __('Book Author',$this->plugin_name);
-	$columns['date']             =  __('Published on',$this->plugin_name);
-	$columns['publisher']        =  __('Book Publisher',$this->plugin_name);
-	$columns['edition']          =  __('Book Edition',$this->plugin_name);
-	$columns['price']            =  __('Book Price',$this->plugin_name);
-	$columns['url']              =  __('Book URL',$this->plugin_name);
+	/**
+	 * Short Description. (use period)
+	 *
+	 * Long Description.
+	 *
+	 * @since    1.0.0
+	 */
+	public static function activate() {
+		register_activation_hook(
+			__FILE__,
+			function () {
+				wp_bookmeta_table_create();
+			}
+		);
 
-	return $columns;
-}
-
-/*output table column values*/
-
-public function output_column_content($column,$post_id){
-	switch($column){
-		case 'author' :
-			echo get_post_meta( $post_id, 'book_author',$this->plugin_name,true );
-		break;
-		case 'date' :
-			echo get_post_meta( $post_id, 'book_published_date',$this->plugin_name,true );
-		break;
-		case 'publisher' :
-			echo get_post_meta( $post_id, 'book_publisher',$this->plugin_name,true );
-		break;
-		case 'edition' :
-			echo get_post_meta( $post_id, 'book_edition',$this->plugin_name,true );
-		break;
-		case 'price' :
-			echo get_post_meta( $post_id, 'book_price',$this->plugin_name,true );
-		break;
-		case 'url' :
-			echo get_post_meta( $post_id, 'book_url',$this->plugin_name,true );
-		break;
-
-		default:
-	break;
 	}
+
 }
+
+ //register deactivation hook in class-wp-book-deactivator.php file
+
+<?php
+
+/**
+ * Fired during plugin deactivation
+ *
+ * @link       https://hvsr26.wordpress.com/
+ * @since      1.0.0
+ *
+ * @package    Wp_Book
+ * @subpackage Wp_Book/includes
+ */
+
+/**
+ * Fired during plugin deactivation.
+ *
+ * This class defines all code necessary to run during the plugin's deactivation.
+ *
+ * @since      1.0.0
+ * @package    Wp_Book
+ * @subpackage Wp_Book/includes
+ * @author     Harshvardhan singh rathore <hvsr26@gmail.com>
+ */
+class Wp_Book_Deactivator {
+
+	/**
+	 * Short Description. (use period)
+	 *
+	 * Long Description.
+	 *
+	 * @since    1.0.0
+	 */
+	public static function deactivate() {
+		register_deactivation_hook(
+			__FILE__,
+			function () {
+			}
+		);
+
+	}
+
+}
+
+
+//create meta table to database in \includes\database.php file
+
+
+<?php
+
+
+/**
+ * Create wp_bookmeta table to database.
+ */
+function wp_bookmeta_table_create()
+{
+    global $wpdb;
+    $collate = $wpdb->get_charset_collate();
+    $sql     = "CREATE TABLE `wp_bookmeta` (
+        `meta_id` bigint(20) NOT NULL AUTO_INCREMENT,
+        `book_id` bigint(20) NOT NULL DEFAULT '0',
+        `meta_key` varchar(255) DEFAULT NULL,
+        `meta_value` longtext,
+        PRIMARY KEY (`meta_id`),
+        KEY `book_id` (`book_id`),
+        KEY `meta_key` (`meta_key`)
+    ) {$collate}";
+    
+    dbDelta($sql);
+
+}//end wp_bookmeta_table_create()
+
+
+
+// * Drop wp_bookmeta table from database.
+
+
+function wp_bookmeta_table_drop()
+{
+    global $wpdb;
+    $prefix = $wpdb->prefix;
+    $sql    = "DROP TABLE IF EXISTS {$prefix}bookmeta";
+    $wpdb->query($sql);
+
+}//end wp_bookmeta_table_drop()
